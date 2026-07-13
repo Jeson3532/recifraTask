@@ -1,6 +1,7 @@
-.txt
-.ipynb
+*.txt
+*.ipynb
 .venv/
 .idea/
 __pycache__/
+static/
 .env
