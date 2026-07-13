@@ -4,12 +4,14 @@ import uvicorn
 import logging
 
 from backend.routes import all_routers
+from backend.services.ml.engine import load_model
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    app.state.model = load_model()
     logger.info("Backend Up")
     yield
     logger.info("Backend Down")

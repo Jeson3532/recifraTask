@@ -1,7 +1,7 @@
 import logging
 from functools import lru_cache
 from typing import Optional
-
+import threading
 import torch
 from transformers import (
     AutoModelForSequenceClassification,
@@ -46,6 +46,7 @@ class ModelService:
 
         self.tokenizer: PreTrainedTokenizerBase = self._load_tokenizer()
         self.model: PreTrainedModel = self._load_model()
+        self._thread_lock = threading.Lock()
 
     @staticmethod
     def _select_device() -> str:
@@ -89,22 +90,23 @@ class ModelService:
 
     @torch.no_grad()
     def request(self, text: str):
-        inputs = self.tokenizer(text, return_tensors="pt", truncation=True).to(self.device)
-        logits = self.model(**inputs).logits
+        with self._thread_lock:
+            inputs = self.tokenizer(text, return_tensors="pt", truncation=True).to(self.device)
+            logits = self.model(**inputs).logits
 
-        probs = torch.softmax(logits, dim=-1).squeeze().tolist()
-        probabilities = {id2label[i]: v for i, v in enumerate(probs)}
-        pred_class = max(probabilities, key=probabilities.get)
-        confidence = probabilities[pred_class]
+            probs = torch.softmax(logits, dim=-1).squeeze().tolist()
+            probabilities = {id2label[i]: v for i, v in enumerate(probs)}
+            pred_class = max(probabilities, key=probabilities.get)
+            confidence = probabilities[pred_class]
 
-        category = CATEGORIES[pred_class]
-        priority = PRIORITIES[category]
-        return {
-            "category": category,
-            "priority": priority,
-            "probabilities": probabilities,
-            "confidence": confidence,
-        }
+            category = CATEGORIES[pred_class]
+            priority = PRIORITIES[category]
+            return {
+                "category": category,
+                "priority": priority,
+                "probabilities": probabilities,
+                "confidence": confidence,
+            }
 
 
 @lru_cache(maxsize=1)
