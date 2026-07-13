@@ -1,0 +1,6 @@
+.txt
+.ipynb
+.venv/
+.idea/
+__pycache__/
+.env
