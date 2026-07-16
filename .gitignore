@@ -3,10 +3,10 @@
 .idea/
 *.pyc
 __pycache__/
-static/
 .env
 *.zip
 *.rar
+static/bert
 
 !requirements.txt
 !README.md
