@@ -6,8 +6,9 @@ __pycache__/
 .env
 *.zip
 *.rar
-static/bert
+static/bert/*
 
 !requirements.txt
 !README.md
 !README.txt
+!static/bert/.gitkeep
