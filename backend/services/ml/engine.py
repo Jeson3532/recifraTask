@@ -12,32 +12,24 @@ from transformers import (
 from peft import PeftModel, PeftConfig
 
 from backend import BASE_MODEL_PATH
+from backend.utils.enums import Priorities, ResponseCategories
 import warnings
+
 warnings.filterwarnings("ignore")
 
 logger = logging.getLogger(__name__)
 
 id2label = {0: "positive", 1: "neutral", 2: "negative"}
-CATEGORIES = {
-    "positive": "resolved",
-    "neutral": "basic",
-    "negative": "complaint",
-}
-PRIORITIES = {
-    "resolved": "low",
-    "basic": "medium",
-    "complaint": "high",
-}
 
 
 class ModelService:
 
     def __init__(
-        self,
-        adapter_path: str = BASE_MODEL_PATH,
-        num_labels: int = 3,
-        device: Optional[str] = None,
-        local_files_only: bool = True,
+            self,
+            adapter_path: str = BASE_MODEL_PATH,
+            num_labels: int = 3,
+            device: Optional[str] = None,
+            local_files_only: bool = True,
     ) -> None:
         self.adapter_path = adapter_path
         self.num_labels = num_labels
@@ -99,8 +91,8 @@ class ModelService:
             pred_class = max(probabilities, key=probabilities.get)
             confidence = probabilities[pred_class]
 
-            category = CATEGORIES[pred_class]
-            priority = PRIORITIES[category]
+            category = ResponseCategories[pred_class]
+            priority = Priorities[category.value]
             return {
                 "category": category,
                 "priority": priority,

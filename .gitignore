@@ -1,9 +1,13 @@
 *.txt
-*.ipynb
 .venv/
 .idea/
+*.pyc
 __pycache__/
 static/
 .env
+*.zip
+*.rar
 
 !requirements.txt
+!README.md
+!README.txt

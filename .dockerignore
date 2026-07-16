@@ -1,0 +1,13 @@
+*.md
+*.txt
+*.docs
+*.ipynb
+.gitignore
+.git
+
+.venv/
+__pycache__/
+.idea/
+*.pyc
+
+!requirements.txt
