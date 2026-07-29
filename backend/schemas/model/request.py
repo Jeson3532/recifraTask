@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
+from backend.utils.enums import  ResponseCategories, Priorities
 import re
+from typing import Dict
 
 
 class ModelRequest(BaseModel):
@@ -24,3 +26,13 @@ class ModelRequest(BaseModel):
         if not text_no_emoji:
             raise ValueError("Текст не содержит слов")
         return text_no_emoji
+
+
+class SaveRequestModel(BaseModel):
+    request_text: str = Field(...)
+    category: ResponseCategories = Field(...)
+    priority: Priorities = Field(...)
+    confidence: float = Field(...)
+    probabilities: Dict[str, float] = Field(...)
+
+    model_config = ConfigDict(from_attributes=True)
