@@ -16,6 +16,7 @@ services:
 #      - ".:/app"
       - "./models:/app/models"
       - "./static:/app/static"
+      - "${USERPROFILE}/.cache/huggingface:/root/.cache/huggingface"
     restart: always
     depends_on:
       - db

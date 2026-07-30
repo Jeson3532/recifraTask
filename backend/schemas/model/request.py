@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field, field_validator, ConfigDict
-from backend.utils.enums import  ResponseCategories, Priorities
+from backend.utils.enums import ResponseCategories, Priorities
 import re
-from typing import Dict
+from typing import Dict, Optional
+from datetime import date
 
 
 class ModelRequest(BaseModel):
@@ -36,3 +37,10 @@ class SaveRequestModel(BaseModel):
     probabilities: Dict[str, float] = Field(...)
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class GetTicketFilteredModel(BaseModel):
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    category: Optional[ResponseCategories] = None
+    priority: Optional[Priorities] = None

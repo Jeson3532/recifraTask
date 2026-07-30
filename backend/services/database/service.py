@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.schemas.model.request import SaveRequestModel
+from backend.schemas.model.request import SaveRequestModel, GetTicketFilteredModel
 import logging
 
 from .repositories import TicketHistoryRepo
@@ -28,20 +28,27 @@ class DatabaseService:
 
 class TicketHistoryService:
     def __init__(self, db: DatabaseService):
-        self.db = db
+        self._db = db
 
-    async def add_ticket(self, request: SaveRequestModel):
+    async def add_ticket(self, request_data: SaveRequestModel):
         try:
-            self.db.ticket_history.add(request=request)
-            await self.db.commit()
+            self._db.ticket_history.add(request=request_data)
+            await self._db.commit()
         except Exception as e:
-            await self.db.rollback()
+            await self._db.rollback()
             logger.error(f"Ошибка в {self.__class__.__name__}. Traceback: {e}", exc_info=True)
             raise
 
     async def get_ticket_by_id(self, id: int):
         try:
-            return await self.db.ticket_history.get_by_id(id_=id)
+            return await self._db.ticket_history.get_by_id(id_=id)
+        except Exception as e:
+            logger.error(f"Ошибка в {self.__class__.__name__}. Traceback: {e}", exc_info=True)
+            raise
+
+    async def get_ticket_filtered(self, filter: GetTicketFilteredModel):
+        try:
+            return await self._db.ticket_history.get(**filter.model_dump())
         except Exception as e:
             logger.error(f"Ошибка в {self.__class__.__name__}. Traceback: {e}", exc_info=True)
             raise

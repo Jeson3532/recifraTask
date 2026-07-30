@@ -61,6 +61,7 @@ class ModelService:
         base_model = AutoModelForSequenceClassification.from_pretrained(
             base_model_name,
             num_labels=self.num_labels,
+            local_files_only=self.local_files_only,
         )
         model = PeftModel.from_pretrained(base_model, self.adapter_path)
         model.to(self.device)
